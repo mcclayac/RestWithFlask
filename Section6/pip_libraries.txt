@@ -14,7 +14,11 @@ pip install Flask-SQLAlchemy
 # SQL Access and ORM Mapping to SQL Data Source
 
 
+Working Directory
+/mcclayac/pythoncode/RestWithFlask/Section6/code
 
+Virtual Environment
+(restAPIFlask_sec6)
 
 $ pip freeze
 aniso8601==1.2.1
