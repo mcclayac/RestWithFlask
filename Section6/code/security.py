@@ -5,7 +5,7 @@ __revision__ = '$'
 __revision_date__ = '$'
 
 
-from Section5.code.user import User
+from resources.user import User
 
 
 # users = [
