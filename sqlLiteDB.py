@@ -14,10 +14,10 @@ cursor = connection.cursor()
 # cursor.execute(create_table)
 
 
-# user = (1, 'jose', 'abcd')
+user = (1, 'jose', 'abcd')
 # user = (2, 'tony', 'javajava')
 insert_query = "INSERT INTO users VALUES (?,?,?)"
-# cursor.execute(insert_query, user)
+cursor.execute(insert_query, user)
 
 # users = [
 #     (3, 'kim', 'javajava'),
@@ -27,7 +27,7 @@ insert_query = "INSERT INTO users VALUES (?,?,?)"
 #     (7, 'yosabelle', 'javajava')
 # ]
 # cursor.executemany(insert_query, users)
-
+# connection.commit()
 
 
 select_query = " select * from users"
