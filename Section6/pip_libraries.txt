@@ -1,0 +1,35 @@
+
+#  Python Libraries
+
+pip install Flask
+#  Basic Resource Mappings to URI's
+
+pip install Flask-JWT
+#  Javascipt Web Tokens
+
+pip install Flask-Restful
+# Restful Web Services
+
+pip install Flask-SQLAlchemy
+# SQL Access and ORM Mapping to SQL Data Source
+
+
+
+
+$ pip freeze
+aniso8601==1.2.1
+click==6.7
+Flask==0.12.2
+Flask-JWT==0.3.2
+Flask-RESTful==0.3.6
+Flask-SQLAlchemy==2.2
+itsdangerous==0.24
+Jinja2==2.9.6
+MarkupSafe==1.0
+PyJWT==1.4.2
+python-dateutil==2.6.1
+pytz==2017.2
+six==1.10.0
+SQLAlchemy==1.1.13
+Werkzeug==0.12.2
+
