@@ -28,8 +28,12 @@ class ItemModel:
     def set_price(self, price):
         self.price = price
 
+    def get_price(self):
+        return float(self.price)
+
     def set_name(self, name):
         self.name = name
+
 
     @classmethod
     def find_by_name(cls, name):
@@ -109,8 +113,12 @@ class ItemModel:
             print("I am unable to connect to the database")
 
         cursor = connection.cursor()
-        update_sql = "UPDATE items SET name = %s, price = %s WHERE name = %s"
-        cursor.execute(update_sql, (self.name, self.price, self.name))
+
+        str_name = self.name
+        float_price = self.get_price()
+
+        update_sql = "UPDATE items SET name = %s, price = %s WHERE name = %s;"
+        cursor.execute(update_sql, (str_name, float_price, str_name))
         connection.commit()
         item = ItemModel.find_by_name(self.name)
         connection.close()
