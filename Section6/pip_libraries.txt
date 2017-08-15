@@ -13,6 +13,8 @@ pip install Flask-Restful
 pip install Flask-SQLAlchemy
 # SQL Access and ORM Mapping to SQL Data Source
 
+pip install psycopg2
+#  Postgrsql COnnection Access
 
 Working Directory
 /mcclayac/pythoncode/RestWithFlask/Section6/code

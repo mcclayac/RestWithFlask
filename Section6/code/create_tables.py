@@ -8,8 +8,15 @@ __revision_date__ = '$'
 
 
 import sqlite3
+import psycopg2
 
-connection = sqlite3.connect('sqlliteData.db')
+try:
+    connection = psycopg2.connect("dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+except:
+    print ("I am unable to connect to the database")
+
+
+# connection = sqlite3.connect('sqlliteData.db')
 cursor = connection.cursor()
 
 create_user_table = \

@@ -5,7 +5,7 @@ __revision__ = '$'
 __revision_date__ = '$'
 
 
-from resources.user import User
+from resources.user import UserModel
 
 
 # users = [
@@ -15,14 +15,14 @@ from resources.user import User
 # userid_mapping = {u.id: u for u in users}
 
 def authenticate(username, password):
-    user = User.find_by_username(username)
+    user = UserModel.find_by_username(username)
     # user = username_mapping.get(username, None)
     if user and user.password == password:
         return user
 
 def identity(payload):
     user_id = payload['identity']
-    user = User.find_by_id(user_id)
+    user = UserModel.find_by_id(user_id)
     # user = userid_mapping.get(user_id, None)
     return user
 

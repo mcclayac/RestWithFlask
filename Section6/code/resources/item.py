@@ -8,6 +8,7 @@ __revision_date__ = '$'
 from flask_restful import Resource, reqparse
 from flask_jwt import  jwt_required
 import sqlite3
+import psycopg2
 
 
 class Item(Resource):
@@ -32,15 +33,23 @@ class Item(Resource):
 
     @classmethod
     def find_by_name(cls, name):
-        connection = sqlite3.connect('sqlliteData.db')
+        # connection = sqlite3.connect('sqlliteData.db')
+        try:
+            connection = psycopg2.connect(
+            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+        except:
+            print("I am unable to connect to the database")
         cursor = connection.cursor()
 
-        select_sql = "SELECT * FROM items where name = ?"
+        select_sql = "SELECT * FROM items where name = %s;"
         result = cursor.execute(select_sql, (name,))
-        row = result.fetchone()
+        rows = cursor.fetchall()
         connection.close()
-        if row:
-            return {"item": {"id": row[0], "name": row[1], "price": row[2]}}
+        if rows:
+            row = rows[0]
+            return {"item": {"id": row[0], "name": row[1], "price": float(row[2])}}
+        else:
+            return None
 
 
 
@@ -70,11 +79,25 @@ class Item(Resource):
 
     @classmethod
     def insert(cls, item):
-        connection = sqlite3.connect('sqlliteData.db')
+        try:
+            connection = psycopg2.connect(
+            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+        except:
+            print("I am unable to connect to the database")
+
+        # connection = sqlite3.connect('sqlliteData.db')
         cursor = connection.cursor()
 
-        insert_sql = "INSERT INTO items VALUES (null, ?, ? )"
-        result = cursor.execute(insert_sql, (item['name'], item['price']))
+        # insert_sql = "INSERT INTO items VALUES (null, %s, %s )"
+        insert_sql = "INSERT INTO items (name,price) VALUES(%s,%s);"
+
+        local_name = item['name']
+        local_price = item['price']
+
+        # local_name = 'computer'
+        # local_price = 99.99
+
+        result = cursor.execute(insert_sql, (local_name, local_price))
 
         connection.commit()
         connection.close()
@@ -84,9 +107,15 @@ class Item(Resource):
         item = self.find_by_name(name)
         if item is None:
             return {"message": "item '{}' does not exisits".format(name)}, 400
-        connection = sqlite3.connect('sqlliteData.db')
+        try:
+            connection = psycopg2.connect(
+            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+        except:
+            print("I am unable to connect to the database")
+
+        # connection = sqlite3.connect('sqlliteData.db')
         cursor = connection.cursor()
-        delete_sql = "DELETE from items where items.name = ?"
+        delete_sql = "DELETE from items where items.name = %s"
         cursor.execute(delete_sql, (name, ))
         connection.commit()
         connection.close()
@@ -125,9 +154,15 @@ class Item(Resource):
 
     @classmethod
     def insertItem(cls, item):
-        connection = sqlite3.connect('sqlliteData.db')
+        # connection = sqlite3.connect('sqlliteData.db')
+        try:
+            connection = psycopg2.connect(
+            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+        except:
+            print("I am unable to connect to the database")
+
         cursor = connection.cursor()
-        insert_sql = "INSERT into items (id, name, price) values (null, ?, ?)"
+        insert_sql = "INSERT into items (name, price) values (%s, %s)"
         cursor.execute(insert_sql, (item['name'],item['price']))
         connection.commit()
 
@@ -137,9 +172,15 @@ class Item(Resource):
 
     @classmethod
     def updateItem(cls, item):
-        connection = sqlite3.connect('sqlliteData.db')
+        # connection = sqlite3.connect('sqlliteData.db')
+        try:
+            connection = psycopg2.connect(
+            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+        except:
+            print("I am unable to connect to the database")
+
         cursor = connection.cursor()
-        update_sql = "UPDATE items SET name = ?, price = ? WHERE name = ?"
+        update_sql = "UPDATE items SET name = %s, price = %s WHERE name = %s"
         cursor.execute(update_sql, (item['name'], item['price'], item['name']))
         connection.commit()
         item = Item.find_by_name(item['name'])
@@ -149,13 +190,21 @@ class Item(Resource):
 
 class Items(Resource):
     def get(self):
-        connection = sqlite3.connect('sqlliteData.db')
+        # connection = sqlite3.connect('sqlliteData.db')
+        try:
+            connection = psycopg2.connect(
+            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+        except:
+            print("I am unable to connect to the database")
+
         cursor = connection.cursor()
         select_sql = "select * from items"
         result = cursor.execute(select_sql)
+        rows = cursor.fetchall()
         items = []
-        for row in result:
-            items.append({"id": row[0], "name":row[1],"price":row[2]})
+        if rows:
+            for row in rows:
+                items.append({"id": row[0], "name":row[1],"price":float(row[2])})
 
         connection.close()
         return {"items": items }
