@@ -9,7 +9,7 @@ __revision_date__ = '$'
 import sqlite3
 from flask_restful import Resource
 from flask_restful import reqparse
-from models.usermodel import UserModel
+from models.user import UserModel
 import psycopg2
 
 
