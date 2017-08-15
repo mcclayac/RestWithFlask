@@ -38,7 +38,7 @@ class UserRegister(Resource):
             print("I am unable to connect to the database")
         cursor = connection.cursor()
 
-        insert_sql = "INSERT INTO users VALUES (NULL, ? ,?)"
+        insert_sql = "INSERT INTO users (username, password) VALUES ( %s ,%s)"
         cursor.execute(insert_sql, (data['username'], data['password']))
 
         connection.commit()

@@ -86,8 +86,13 @@ class ItemModel:
             print("I am unable to connect to the database")
 
         cursor = connection.cursor()
-        insert_sql = "INSERT into items (name, price) values (%s, %s)"
-        cursor.execute(insert_sql, (self.name, self.price))
+        insert_sql = "INSERT into items (name, price) values (%s, %s);"
+
+        str_name = self.name
+        float_price = float(self.price)
+
+        # cursor.execute(insert_sql, ('duck', 12.33))
+        cursor.execute(insert_sql, (str_name, float_price))
         connection.commit()
 
         item = ItemModel.find_by_name(self.name)

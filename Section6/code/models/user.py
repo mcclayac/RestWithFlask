@@ -37,8 +37,8 @@ class UserModel:
         query_string = "SELECT * FROM users where username =%s"
         cursor.execute(query_string, (username,))   #  argument must by a tuple
         rows = cursor.fetchall()
-        row = rows[0]
-        if row:
+        if rows:
+            row = rows[0]
             # user = cls(row[0], row[1], row[2])
             user = cls(*row)
         else:
