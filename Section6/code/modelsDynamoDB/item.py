@@ -8,28 +8,87 @@ __revision_date__ = '$'
 
 import psycopg2
 from sqlAlchemy import db
+import boto3
+import decimal
 
 
 
 # dbConnectString = "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'"
 
-# Internal Representation
-class ItemModel(db.Model):
-    __tablename__ = "items"
+90
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    price = db.Column(db.Float(precision=2))
-
-    def __int__(self, _id, name, price):
+class ItemModelTony():
+    def __init__(self, uID, name, price):
         self.name = name
         self.price = price
-        self.id = _id
+        self.id = uID
 
-    def __int__(self):
-        self.name = ""
-        self.price = 0
-        self.id = 0
+    def setPrimaryKey(self):
+        from random import randint
+
+        primary_key = randint(1, 10000)
+        self.id = primary_key
+
+
+    def dynamoDBjson(self):
+        sPrice = str(self.price)
+        return {
+            'id':self.id,
+            'name':self.name,
+            'price':decimal.Decimal(sPrice)
+        }
+
+    def json(self):
+        sPrice = str(self.price)
+        return {
+            'id':self.id,
+            'name':self.name,
+            'price':sPrice
+        }
+
+    def insert(self):
+        import boto3
+        import decimal
+
+        # Get the service resource.
+        dynamodb = boto3.resource('dynamodb')
+
+        # Instantiate a table resource object without actually
+        # creating a DynamoDB table. Note that the attributes of this table
+        # are lazy-loaded: a request is not made nor are the attribute
+        # values populated until the attributes
+        # on the table resource are accessed or its load() method is called.
+        itemTable = dynamodb.Table('items')
+
+
+        self.setPrimaryKey()
+        jsonItem = self.dynamoDBjson()
+
+        itemTable.put_item(Item=jsonItem)
+
+        jsonResult = self.json()
+
+        return jsonResult
+
+
+
+
+
+
+
+
+
+# Internal Representation
+class ItemModelDynamoDB():
+    def __int__(self, aUniqueID, name, price):
+        self.name = name
+        self.price = price
+        self.id = aUniqueID
+
+    # def __int__(self):
+    #     self.name = ""
+    #     self.price = 0
+    #     self.id = 0
 
     def json(self):
         return {
@@ -50,6 +109,31 @@ class ItemModel(db.Model):
     def set_name(self, name):
         self.name = name
 
+    def dyanmoInsert(self):
+
+        import boto3
+        import decimal
+
+        # Get the service resource.
+        dynamodb = boto3.resource('dynamodb')
+
+        # Instantiate a table resource object without actually
+        # creating a DynamoDB table. Note that the attributes of this table
+        # are lazy-loaded: a request is not made nor are the attribute
+        # values populated until the attributes
+        # on the table resource are accessed or its load() method is called.
+        itemTable = dynamodb.Table('items')
+
+        from random import randint
+
+        primary_key = randint(1, 10000)
+        jsonItem = self.json()
+
+        itemTable.put_item(Item=jsonItem)
+
+        return jsonItem
+
+
 
     @classmethod
     def find_by_name(cls, name):
@@ -65,15 +149,15 @@ class ItemModel(db.Model):
         result = cursor.execute(select_sql, (name,))
         rows = cursor.fetchall()
         connection.close()
-        if rows:
-            row = rows[0]
-            item = ItemModel()
-            item.set_name(row[1])
-            item.set_id(row[0])
-            item.set_price(row[2])
-            return item
-        else:
-            return None
+        # if rows:
+        #     row = rows[0]
+        #     # item = ItemModel()
+        #     item.set_name(row[1])
+        #     item.set_id(row[0])
+        #     item.set_price(row[2])
+        #     return item
+        # else:
+        return None
 
 
 
@@ -119,9 +203,10 @@ class ItemModel(db.Model):
         cursor.execute(insert_sql, (str_name, float_price))
         connection.commit()
 
-        item = ItemModel.find_by_name(self.name)
+        # item = ItemModel.find_by_name(self.name)
         connection.close()
-        return item
+        # return item
+        return None
 
 
     def updateItem(self):
@@ -141,7 +226,8 @@ class ItemModel(db.Model):
         update_sql = "UPDATE items SET name = %s, price = %s WHERE name = %s;"
         cursor.execute(update_sql, (str_name, float_price, str_name))
         connection.commit()
-        item = ItemModel.find_by_name(self.name)
+        # item = ItemModel.find_by_name(self.name)
+        item = None
         connection.close()
         return item
 

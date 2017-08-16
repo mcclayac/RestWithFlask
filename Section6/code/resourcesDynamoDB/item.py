@@ -11,9 +11,15 @@ import sqlite3
 import psycopg2
 from models.item import ItemModel
 
+# Dynamo DB Models
+from modelsDynamoDB.item import ItemModelDynamoDB, ItemModelTony
 
 
-class Item(Resource):
+
+
+
+
+class ItemDynamoDB(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('price',
                         type=float,
@@ -25,7 +31,7 @@ class Item(Resource):
     # make sure it is required
 
 
-    @jwt_required()
+    # @jwt_required()
     def get(self, name):
 
         item = ItemModel.find_by_name(name)
@@ -35,23 +41,32 @@ class Item(Resource):
 
 
 
-    @jwt_required()
+    # @jwt_required()
     def post(self, name):
-        item = ItemModel.find_by_name(name)
-        if item:
-            return {"message": "item '{}' already exisits".format(name)}, 400
+
+        #  check is already exists
+        # item = ItemModel.find_by_name(name)
+        # if item:
+        #     return {"message": "item '{}' already exisits".format(name)}, 400
 
         # item0 = ItemModel()
-
         # item1 = ItemModel('tony', 13.99)
+        #
 
+        # Parse the data from the Resource
+        request_data = ItemDynamoDB.parser.parse_args()
+
+        itemTony = ItemModelTony(0,name,request_data['price'] )
+        itemJson = itemTony.insert()
+
+        return itemJson
 
 
 
         # if next(filter(lambda x: x['name'] == name, items), None) is not None:
         #     return {'message': "An item with name '{}' already exists.".format(name)}, 400
         # request_data = request.get_json()
-        request_data = Item.parser.parse_args()
+        request_data = ItemDynamoDB.parser.parse_args()
 
         item2 = ItemModel()
         item2.set_name(name)
@@ -71,7 +86,7 @@ class Item(Resource):
 
 
 
-    @jwt_required()
+    # @jwt_required()
     def delete(self, name):
         item = ItemModel.find_by_name(name)
         if item is None:
@@ -91,11 +106,11 @@ class Item(Resource):
         connection.close()
         return ({"message":"Item '{}' has been deleted".format(name)})
 
-    @jwt_required()
+    # @jwt_required()
     def put(self, name):
 
         item = ItemModel.find_by_name(name)
-        request_data = Item.parser.parse_args()
+        request_data = ItemDynamoDB.parser.parse_args()
         updated_item = ""
         updated_item = ItemModel()
         updated_item.set_name(name)
@@ -116,7 +131,7 @@ class Item(Resource):
 
 
 
-class Items(Resource):
+class ItemsDynamoDB(Resource):
     def get(self):
         try:
             connection = psycopg2.connect(

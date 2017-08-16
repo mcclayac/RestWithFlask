@@ -13,7 +13,7 @@ from models.user import UserModel
 import psycopg2
 
 
-class UserRegister(Resource):
+class UserRegisterDynamoDB(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('username',
                         type=str,
