@@ -31,6 +31,7 @@ class UserRegister(Resource):
             return {"message": "User '{}' already exists".format(data['username'])}, 400
 
         # connection = sqlite3.connect('sqlliteData.db')
+
         try:
             connection = psycopg2.connect(
             "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")

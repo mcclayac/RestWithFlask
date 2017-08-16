@@ -8,6 +8,8 @@ __revision_date__ = '$'
 
 import psycopg2
 
+# dbConnectString = "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'"
+
 # Internal Representation
 class ItemModel:
     def __int__(self):
@@ -37,6 +39,7 @@ class ItemModel:
 
     @classmethod
     def find_by_name(cls, name):
+        global dbConnectString
         try:
             connection = psycopg2.connect(
                 "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
@@ -61,6 +64,7 @@ class ItemModel:
 
 
     def insert(self):
+        global dbConnectString
         try:
             connection = psycopg2.connect(
                 "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
@@ -83,9 +87,10 @@ class ItemModel:
 
 
     def insertItem(self):
+        global dbConnectString
         try:
             connection = psycopg2.connect(
-                "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+                "dbname='restfulAPIFlask' user_id='restfulapi' host='localhost' password='11javajava'")
         except:
             print("I am unable to connect to the database")
 
@@ -105,6 +110,7 @@ class ItemModel:
 
 
     def updateItem(self):
+        global dbConnectString
 
         try:
             connection = psycopg2.connect(

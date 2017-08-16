@@ -8,8 +8,12 @@ __revision_date__ = '$'
 import sqlite3
 import psycopg2
 
+# psycopg2global dbConnectString = "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'"
+
+
 try:
-    connection = psycopg2.connect("dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+    connection = psycopg2.connect( dbConnectString )
+        # "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
 except:
     print ("I am unable to connect to the database")
 
@@ -24,6 +28,7 @@ class UserModel:
     @classmethod
     def find_by_username(cls, username):
         # connection = sqlite3.connect('sqlliteData.db')
+        global dbConnectString
         try:
             connection = psycopg2.connect(
             "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
@@ -50,6 +55,7 @@ class UserModel:
 
     @classmethod
     def find_by_id(cls, _id):
+        global dbConnectString
         try:
             connection = psycopg2.connect(
             "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")

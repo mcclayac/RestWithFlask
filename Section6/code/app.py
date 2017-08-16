@@ -16,6 +16,7 @@ from resources.item import Item, Items
 
 app = Flask(__name__)
 app.secret_key = 'MySecretKey'
+
 api = Api(app)
 
 jwt = JWT(app, authenticate, identity)  # /Auth

@@ -11,6 +11,8 @@ import sqlite3
 import psycopg2
 from models.item import ItemModel
 
+
+
 class Item(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('price',
@@ -74,6 +76,7 @@ class Item(Resource):
         item = ItemModel.find_by_name(name)
         if item is None:
             return {"message": "item '{}' does not exisits".format(name)}, 400
+
         try:
             connection = psycopg2.connect(
             "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
@@ -115,7 +118,6 @@ class Item(Resource):
 
 class Items(Resource):
     def get(self):
-        # connection = sqlite3.connect('sqlliteData.db')
         try:
             connection = psycopg2.connect(
             "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")

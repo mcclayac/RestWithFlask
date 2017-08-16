@@ -8,7 +8,7 @@ pip install Flask-JWT
 #  Javascipt Web Tokens
 
 pip install Flask-Restful
-# Restful Web Services
+# Restful Web Services aoi mappings
 
 pip install Flask-SQLAlchemy
 # SQL Access and ORM Mapping to SQL Data Source
