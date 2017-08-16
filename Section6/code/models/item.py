@@ -90,7 +90,8 @@ class ItemModel:
         global dbConnectString
         try:
             connection = psycopg2.connect(
-                "dbname='restfulAPIFlask' user_id='restfulapi' host='localhost' password='11javajava'")
+                "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+
         except:
             print("I am unable to connect to the database")
 
