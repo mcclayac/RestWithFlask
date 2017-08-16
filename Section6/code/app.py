@@ -15,6 +15,7 @@ from resources.item import Item, Items
 
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'MySecretKey'
 
 api = Api(app)
@@ -26,6 +27,8 @@ api.add_resource(Items, '/items')
 api.add_resource(UserRegister, '/register')
 
 if __name__ == '__main__':
+    from sqlAlchemy import db   #  SQL Alchemy Boot strap
+    db.init_app(app)            #  SQL Alchemy Boot strap
     app.run(port=5000, debug=True)
 
 

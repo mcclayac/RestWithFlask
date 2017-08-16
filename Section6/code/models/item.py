@@ -7,11 +7,25 @@ __revision_date__ = '$'
 
 
 import psycopg2
+from sqlAlchemy import db
+
+
 
 # dbConnectString = "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'"
 
 # Internal Representation
-class ItemModel:
+class ItemModel(db.Model):
+    __tablename__ = "items"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    price = db.Column(db.Float(precision=2))
+
+    def __int__(self, _id, name, price):
+        self.name = name
+        self.price = price
+        self.id = _id
+
     def __int__(self):
         self.name = ""
         self.price = 0
