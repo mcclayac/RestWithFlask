@@ -39,19 +39,23 @@ class ItemModelTony():
         }
 
     def json(self):
-        sPrice = str(self.price)
+        fPrice = float(self.price)
+        sID = int(self.id)
         return {
-            'id':self.id,
+            'id':sID,
             'name':self.name,
-            'price':sPrice
+            'price':fPrice
         }
+
+    def setPrice(self, price):
+        self.price = price
 
     def insert(self):
         import boto3
         import decimal
 
         # Get the service resource.
-        dynamodb = boto3.resource('dynamodb')
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
         # Instantiate a table resource object without actually
         # creating a DynamoDB table. Note that the attributes of this table
@@ -59,6 +63,10 @@ class ItemModelTony():
         # values populated until the attributes
         # on the table resource are accessed or its load() method is called.
         itemTable = dynamodb.Table('items')
+
+        print(itemTable.creation_date_time)
+
+        creationDate = itemTable.creation_date_time
 
 
         self.setPrimaryKey()
@@ -71,6 +79,75 @@ class ItemModelTony():
         return jsonResult
 
 
+    def itemSave(self):
+        import boto3
+        import decimal
+
+        # Get the service resource.
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+
+        # Instantiate a table resource object without actually
+        # creating a DynamoDB table. Note that the attributes of this table
+        # are lazy-loaded: a request is not made nor are the attribute
+        # values populated until the attributes
+        # on the table resource are accessed or its load() method is called.
+        itemTable = dynamodb.Table('items')
+
+        print(itemTable.creation_date_time)
+
+        creationDate = itemTable.creation_date_time
+
+        jsonItem = self.dynamoDBjson()
+
+        itemTable.put_item(Item=jsonItem)
+
+        jsonResult = self.json()
+
+        return jsonResult
+
+    @classmethod
+    def find_by_name(cls, itemName):
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+
+        # Instantiate a table resource object without actually
+        # creating a DynamoDB table. Note that the attributes of this table
+        # are lazy-loaded: a request is not made nor are the attribute
+        # values populated until the attributes
+        # on the table resource are accessed or its load() method is called.
+        itemTable = dynamodb.Table('items')
+
+        # itemName = self.name
+
+        from boto3.dynamodb.conditions import Attr
+        response = itemTable.scan(
+            FilterExpression=Attr('name').eq(itemName)
+        )
+        items = list(response['Items'])
+
+        if items:
+            # print("Got something")
+            item = items[0]
+            name = item['name']
+            _id = item['id']
+            price = item['price']
+
+            aItemModelTony = ItemModelTony(_id, name, price)
+            return aItemModelTony
+            # print('ID : {}  Name : {}  Price : {}'.format(_id, name, price))
+        else:
+            return None
+
+    def itemDelete(self):
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+
+        itemTable = dynamodb.Table('items')
+
+        itemTable.delete_item(
+            Key={
+                'id': self.id,
+                'name': self.name
+            }
+        )
 
 
 

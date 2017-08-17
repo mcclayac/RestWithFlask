@@ -10,6 +10,7 @@ from flask_jwt import  jwt_required
 import sqlite3
 import psycopg2
 from models.item import ItemModel
+from modelsDynamoDB.item import ItemModelTony
 
 
 
@@ -27,6 +28,7 @@ class Item(Resource):
 
     @jwt_required()
     def get(self, name):
+
 
         item = ItemModel.find_by_name(name)
         if item:

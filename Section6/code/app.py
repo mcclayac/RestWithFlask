@@ -8,6 +8,8 @@ __revision_date__ = '$'
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
+import boto3
+
 
 # Security
 from security import authenticate, identity

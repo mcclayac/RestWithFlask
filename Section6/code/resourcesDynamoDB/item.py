@@ -11,6 +11,8 @@ import sqlite3
 import psycopg2
 from models.item import ItemModel
 
+import boto3
+
 # Dynamo DB Models
 from modelsDynamoDB.item import ItemModelDynamoDB, ItemModelTony
 
@@ -34,7 +36,8 @@ class ItemDynamoDB(Resource):
     # @jwt_required()
     def get(self, name):
 
-        item = ItemModel.find_by_name(name)
+
+        item = ItemModelTony.find_by_name(name)
         if item:
             return item.json()
         return {"message" : "item '{}' does not exisit".format(name)}, 404
@@ -88,67 +91,78 @@ class ItemDynamoDB(Resource):
 
     # @jwt_required()
     def delete(self, name):
-        item = ItemModel.find_by_name(name)
+        item = ItemModelTony.find_by_name(name)
         if item is None:
             return {"message": "item '{}' does not exisits".format(name)}, 400
 
-        try:
-            connection = psycopg2.connect(
-            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
-        except:
-            print("I am unable to connect to the database")
+        item.itemDelete()
+        return {"message" : "{} has been deleted".format(name)}
 
-        # connection = sqlite3.connect('sqlliteData.db')
-        cursor = connection.cursor()
-        delete_sql = "DELETE from items where items.name = %s"
-        cursor.execute(delete_sql, (name, ))
-        connection.commit()
-        connection.close()
-        return ({"message":"Item '{}' has been deleted".format(name)})
+
 
     # @jwt_required()
     def put(self, name):
 
-        item = ItemModel.find_by_name(name)
-        request_data = ItemDynamoDB.parser.parse_args()
-        updated_item = ""
-        updated_item = ItemModel()
-        updated_item.set_name(name)
-        updated_item.set_price(request_data['price'])
 
+        item = ItemModelTony.find_by_name(name)
         if item is None:
-            try :
-                item = updated_item.insertItem()
-            except:
-                return {"message":"Error Inserting item '{}' ".format(name)}, 500
-        else:
-            try:
-                item = updated_item.updateItem()
-            except:
-                return {"message":"error updating item '{}' ".format(name)}, 500
+            return {"message" : "item '{}' does not exisit".format(name)}, 404
 
-        return (item.json()), 201
+        request_data = ItemDynamoDB.parser.parse_args()
+        item.setPrice(request_data['price'])
+
+        json = item.itemSave()
+
+        return json
+
 
 
 
 class ItemsDynamoDB(Resource):
     def get(self):
-        try:
-            connection = psycopg2.connect(
-            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
-        except:
-            print("I am unable to connect to the database")
 
-        cursor = connection.cursor()
-        select_sql = "select * from items"
-        result = cursor.execute(select_sql)
-        rows = cursor.fetchall()
-        items = []
-        if rows:
-            for row in rows:
-                items.append({"id": row[0], "name":row[1],"price":float(row[2])})
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+        itemTable = dynamodb.Table('items')
+        from boto3.dynamodb.conditions import Attr
+        response = itemTable.scan(
+            # FilterExpression=Attr('name').eq('bed')
+        )
+        items = list(response['Items'])
 
-        connection.close()
-        return {"items": items }
+        ItemModelTonyList = []
+        jsonResponse = []
+
+
+        for item in items:
+            name = item['name']
+            _id = item['id']
+            price = item['price']
+            print('ID : {}  Name : {}  Price : {}'.format(_id, name, price))
+            aItemModelTony = ItemModelTony(_id, name, price)
+            ItemModelTonyList.append(aItemModelTony)
+            jsonResponse.append(aItemModelTony.json())
+
+        print(jsonResponse)
+        return {"items" : jsonResponse }
+
+
+
+        # try:
+        #     connection = psycopg2.connect(
+        #     "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+        # except:
+        #     print("I am unable to connect to the database")
+        #
+        # cursor = connection.cursor()
+        # select_sql = "select * from items"
+        # result = cursor.execute(select_sql)
+        # rows = cursor.fetchall()
+        # items = []
+        # if rows:
+        #     for row in rows:
+        #         items.append({"id": row[0], "name":row[1],"price":float(row[2])})
+        #
+        # connection.close()
+        # return {"items": items }
 
 
