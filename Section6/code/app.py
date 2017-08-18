@@ -22,6 +22,11 @@ from resources.item import Item, Items
 from resourcesDynamoDB.user import UserRegisterDynamoDB
 from resourcesDynamoDB.item import ItemDynamoDB, ItemsDynamoDB
 
+# SQLAlchemy Resources
+from resourcesSQLAlchemy.user import UserRegisterSQLAlchemy
+from resourcesSQLAlchemy.item import ItemSQLAlchemy, ItemsSQLAlchemy
+
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -40,6 +45,12 @@ api.add_resource(UserRegister, '/register')
 api.add_resource(ItemDynamoDB, '/itemDynamoDB/<string:name>')
 api.add_resource(ItemsDynamoDB, '/itemsDynamoDB')
 api.add_resource(UserRegisterDynamoDB, '/registerDynamoDB')
+
+# SQLAlchemy Resources
+api.add_resource(ItemSQLAlchemy, '/itemSQLAlchemy/<string:name>')
+api.add_resource(ItemsSQLAlchemy, '/itemsSQLAlchemy')
+api.add_resource(UserRegisterSQLAlchemy, '/registerSQLAlchemy')
+
 
 
 if __name__ == '__main__':

@@ -9,11 +9,13 @@ from flask_restful import Resource, reqparse
 from flask_jwt import  jwt_required
 import sqlite3
 import psycopg2
-from models.item import ItemModel
+# from models.item import ItemModel
+from modelsSQLAlchemy.item import ItemModelSQLAlchemy
 
 
 
-class Item(Resource):
+
+class ItemSQLAlchemy(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('price',
                         type=float,
@@ -28,7 +30,7 @@ class Item(Resource):
     @jwt_required()
     def get(self, name):
 
-        item = ItemModel.find_by_name(name)
+        item = ItemModelSQLAlchemy.find_by_name(name)
         if item:
             return item.json()
         return {"message" : "item '{}' does not exisit".format(name)}, 404
@@ -37,7 +39,7 @@ class Item(Resource):
 
     @jwt_required()
     def post(self, name):
-        item = ItemModel.find_by_name(name)
+        item = ItemModelSQLAlchemy.find_by_name(name)
         if item:
             return {"message": "item '{}' already exisits".format(name)}, 400
 
@@ -51,9 +53,9 @@ class Item(Resource):
         # if next(filter(lambda x: x['name'] == name, items), None) is not None:
         #     return {'message': "An item with name '{}' already exists.".format(name)}, 400
         # request_data = request.get_json()
-        request_data = Item.parser.parse_args()
+        request_data = ItemSQLAlchemy.parser.parse_args()
 
-        item2 = ItemModel()
+        item2 = ItemModelSQLAlchemy()
         item2.set_name(name)
         item2.set_price(request_data['price'])
 
@@ -73,7 +75,7 @@ class Item(Resource):
 
     @jwt_required()
     def delete(self, name):
-        item = ItemModel.find_by_name(name)
+        item = ItemModelSQLAlchemy.find_by_name(name)
         if item is None:
             return {"message": "item '{}' does not exisits".format(name)}, 400
 
@@ -94,10 +96,10 @@ class Item(Resource):
     @jwt_required()
     def put(self, name):
 
-        item = ItemModel.find_by_name(name)
-        request_data = Item.parser.parse_args()
+        item = ItemModelSQLAlchemy.find_by_name(name)
+        request_data = ItemSQLAlchemy.parser.parse_args()
         updated_item = ""
-        updated_item = ItemModel()
+        updated_item = ItemModelSQLAlchemy()
         updated_item.set_name(name)
         updated_item.set_price(request_data['price'])
 
@@ -116,7 +118,7 @@ class Item(Resource):
 
 
 
-class Items(Resource):
+class ItemsSQLAlchemy(Resource):
     def get(self):
         try:
             connection = psycopg2.connect(

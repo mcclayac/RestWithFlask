@@ -14,7 +14,7 @@ from sqlAlchemy import db
 # dbConnectString = "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'"
 
 # Internal Representation
-class ItemModel(db.Model):
+class ItemModelSQLAlchemy(db.Model):
     __tablename__ = "items"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -67,7 +67,7 @@ class ItemModel(db.Model):
         connection.close()
         if rows:
             row = rows[0]
-            item = ItemModel()
+            item = ItemModelSQLAlchemy()
             item.set_name(row[1])
             item.set_id(row[0])
             item.set_price(row[2])
@@ -119,7 +119,7 @@ class ItemModel(db.Model):
         cursor.execute(insert_sql, (str_name, float_price))
         connection.commit()
 
-        item = ItemModel.find_by_name(self.name)
+        item = ItemModelSQLAlchemy.find_by_name(self.name)
         connection.close()
         return item
 
@@ -141,7 +141,7 @@ class ItemModel(db.Model):
         update_sql = "UPDATE items SET name = %s, price = %s WHERE name = %s;"
         cursor.execute(update_sql, (str_name, float_price, str_name))
         connection.commit()
-        item = ItemModel.find_by_name(self.name)
+        item = ItemModelSQLAlchemy.find_by_name(self.name)
         connection.close()
         return item
 

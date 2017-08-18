@@ -14,12 +14,7 @@ from sqlAlchemy import db
 # dbConnectString = "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'"
 
 # Internal Representation
-class ItemModel(db.Model):
-    __tablename__ = "items"
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    price = db.Column(db.Float(precision=2))
+class ItemModel():
 
     def __int__(self, _id, name, price):
         self.name = name

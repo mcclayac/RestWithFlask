@@ -21,7 +21,7 @@ except:
 
 
 
-class UserModel(db.Model):
+class UserModelSQLAlchemy(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
