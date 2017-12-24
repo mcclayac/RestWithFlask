@@ -6,6 +6,7 @@ __revision_date__ = '$'
 
 
 from resources.user import UserModel
+from resourcesDynamoDB.user import  UserModelDynamoDB
 
 
 # users = [
@@ -15,14 +16,16 @@ from resources.user import UserModel
 # userid_mapping = {u.id: u for u in users}
 
 def authenticate(username, password):
-    user = UserModel.find_by_username(username)
+    user = UserModel.find_by_username(username)        # PostgrsqlDB User Model
+    userDynamoDB = UserModelDynamoDB.find_by_username(username)  # aws Dynamo DB User Model
     # user = username_mapping.get(username, None)
-    if user and user.password == password:
-        return user
+    if userDynamoDB and userDynamoDB.password  == password:
+        return userDynamoDB
 
 def identity(payload):
     user_id = payload['identity']
-    user = UserModel.find_by_id(user_id)
+    # user = UserModel.find_by_id(user_id)       # PostgrsqlDB User Model
+    user = UserModelDynamoDB.find_by_id(user_id) # aws Dynamo DB User Model
     # user = userid_mapping.get(user_id, None)
     return user
 

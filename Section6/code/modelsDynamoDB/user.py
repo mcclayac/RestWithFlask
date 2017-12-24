@@ -5,29 +5,26 @@ __revision__ = '$'
 __revision_date__ = '$'
 
 
-import sqlite3
-import psycopg2
-from sqlAlchemy import db
+# import sqlite3
+# import psycopg2
+# from sqlAlchemy import db
+import boto3
+import decimal
+
 
 
 # psycopg2global dbConnectString = "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'"
 
 
-try:
-    connection = psycopg2.connect( dbConnectString )
-        # "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
-except:
-    print ("I am unable to connect to the database")
+# try:
+#     connection = psycopg2.connect( dbConnectString )
+#         # "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
+# except:
+#     print ("I am unable to connect to the database")
 
 
 
-class UserModel(db.Model):
-    __tablename__ = 'users'
-
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80))
-    password = db.Column(db.String(80))
-
+class UserModelDynamoDB():
 
     def __init__(self, _id, username, password):
         self.id = _id
@@ -36,57 +33,76 @@ class UserModel(db.Model):
 
     @classmethod
     def find_by_username(cls, username):
-        # connection = sqlite3.connect('sqlliteData.db')
-        global dbConnectString
-        try:
-            connection = psycopg2.connect(
-            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
-            print("pycopq2 : Connected")
+        import boto3
+        from boto3.dynamodb.conditions import Key, Attr
 
-        except:
-            print("I am unable to connect to the database")
+        # Get the service resource.
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
-        cursor = connection.cursor()
+        userTable = dynamodb.Table('users')
 
-        query_string = "SELECT * FROM users where username =%s"
-        cursor.execute(query_string, (username,))   #  argument must by a tuple
-        rows = cursor.fetchall()
-        if rows:
-            row = rows[0]
-            # user = cls(row[0], row[1], row[2])
-            user = cls(*row)
-        else:
-            user = None
+        response = userTable.scan(
+            FilterExpression=Attr('username').eq(username)
+        )
+        users = response['Items']
+        user = None
 
-        connection.close()
-        return user
+        if len(users) != 0 :
+            user = users[0]
+
+        arg_id = int(user["id"])
+        arg_userName = user["username"]
+        arg_password = user["password"]
+
+        userModel = UserModelDynamoDB(arg_id, arg_userName, arg_password)
+
+        return userModel
 
 
     @classmethod
     def find_by_id(cls, _id):
-        global dbConnectString
-        try:
-            connection = psycopg2.connect(
-            "dbname='restfulAPIFlask' user='restfulapi' host='localhost' password='11javajava'")
-        except:
-            print("I am unable to connect to the database")
+        import boto3
+        from boto3.dynamodb.conditions import Key, Attr
+
+        # Get the service resource.
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+
+        userTable = dynamodb.Table('users')
+
+        response = userTable.scan(
+            FilterExpression=Attr('id').eq(_id)
+        )
+        users = response['Items']
+        user = None
+
+        if len(users) != 0:
+            user = users[0]
+
+        arg_id = int(user["id"])
+        arg_userName = user["username"]
+        arg_password = user["password"]
+
+        userModel = UserModelDynamoDB(arg_id, arg_userName, arg_password)
+
+        return userModel
+        # return user
 
         # connection = sqlite3.connect('sqlliteData.db')
-        cursor = connection.cursor()
-
-        query_string = "SELECT * " \
-                       "FROM users " \
-                       "where id = %s"
-        result = cursor.execute(query_string, (_id,))   #  argument must by a tuple
-        rows = cursor.fetchall()
-        row = rows[0]
-        if row:
-            # user = cls(row[0], row[1], row[2])
-            user = cls(*row)
-        else:
-            user = None
-
-        connection.close()
-        return user
+        # cursor = connection.cursor()
+        #
+        # query_string = "SELECT * " \
+        #                "FROM users " \
+        #                "where id = %s"
+        # result = cursor.execute(query_string, (_id,))   #  argument must by a tuple
+        # rows = cursor.fetchall()
+        # row = rows[0]
+        # if row:
+        #     # user = cls(row[0], row[1], row[2])
+        #     user = cls(*row)
+        # else:
+        #     user = None
+        #
+        # connection.close()
+        # return user
 
 

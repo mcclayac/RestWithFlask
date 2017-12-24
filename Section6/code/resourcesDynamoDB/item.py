@@ -33,7 +33,7 @@ class ItemDynamoDB(Resource):
     # make sure it is required
 
 
-    # @jwt_required()
+    @jwt_required()
     def get(self, name):
 
 
@@ -44,7 +44,7 @@ class ItemDynamoDB(Resource):
 
 
 
-    # @jwt_required()
+    @jwt_required()
     def post(self, name):
 
         #  check is already exists
@@ -89,7 +89,7 @@ class ItemDynamoDB(Resource):
 
 
 
-    # @jwt_required()
+    @jwt_required()
     def delete(self, name):
         item = ItemModelTony.find_by_name(name)
         if item is None:
@@ -100,7 +100,7 @@ class ItemDynamoDB(Resource):
 
 
 
-    # @jwt_required()
+    @jwt_required()
     def put(self, name):
 
 
